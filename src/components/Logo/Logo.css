@@ -1,0 +1,21 @@
+.logo {
+  width: 39px;
+  height: 38px;
+  background: url(../../images/logo.svg) no-repeat left;
+  background-size: contain;
+}
+
+.logo_main {
+  padding-right: 28px;
+}
+
+.logo_sign {
+  margin: 0;
+}
+
+/*media-screen*/
+@media screen and (max-width:425px) {
+  .logo_sign {
+    margin: auto;
+  }
+}

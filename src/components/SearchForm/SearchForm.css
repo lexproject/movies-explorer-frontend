@@ -1,0 +1,134 @@
+.searh-form__field {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 35px;
+}
+
+.searh-form {
+  display: flex;
+  flex-direction: column;
+  margin: 80px 70px 14px;
+  border-bottom: 1px solid #424242;
+}
+
+.searh-form__button {
+  width: 70px;
+  height: 44px;
+  background-color: #4285F4;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+  color: #ffffff;
+  border: none;
+  margin-left: 15px;
+  border-radius: 3px;
+  padding: 0;
+}
+
+.searh-form__input {
+  max-width: 1060px;
+  width: 100%;
+  height: 48px;
+  background-color: #2F2F2F;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 4px;
+  padding: 0 22px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.29;
+  outline: none;
+  color: #fff;
+}
+
+.searh-form__switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+.searh-form__checkbox {
+  display: none;
+}
+
+.searh-form__slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #EBEBEB;
+  border-radius: 20px;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.searh-form__slider:before {
+  position: absolute;
+  content: "";
+  height: 8px;
+  width: 8px;
+  left: 6px;
+  bottom: 6px;
+  background-color: #F5F5F5;
+  border-radius: 50%;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.searh-form__checkbox:checked+.searh-form__slider {
+  background-color: #2BE080;
+}
+
+.searh-form__checkbox:checked+.searh-form__slider:before {
+  background-color: #ffffff;
+}
+
+.searh-form__checkbox:checked+.searh-form__slider:before {
+  -webkit-transform: translateX(14px);
+  -ms-transform: translateX(14px);
+  transform: translateX(14px);
+}
+
+.searh-form__text {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 0;
+  margin: 0;
+}
+
+/*media-screen*/
+@media screen and (max-width:768px) {
+  .searh-form {
+    margin-left: 30px;
+    margin-right: 30px;
+  }
+  .searh-form__button {
+    margin-left: 10px;
+  }
+}
+@media screen and (max-width:425px) {
+  .searh-form {
+    margin-left: 14px;
+    margin-right: 14px;
+  }
+  .searh-form__button {
+    width: 100px;
+  }
+  .searh-form__field {
+    margin-bottom: 45px;
+  }
+  .searh-form__input {
+    padding: 0 16px;
+    height: 44px;
+    font-size: 12px;
+  }
+}

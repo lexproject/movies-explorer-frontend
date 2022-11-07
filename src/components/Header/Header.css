@@ -1,0 +1,152 @@
+.header {
+  flex-direction: column;
+  background-color: #202020;
+  padding: 0 70px;
+  height: 74px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header_type_sign {
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 106px;
+  max-width: 396px;
+  margin: auto;
+  align-items: flex-start;
+}
+
+.header__menu-button {
+  display: none;
+  position: absolute;
+  top: 15px;
+  right: 4.2%;
+  width: 35px;
+  height: 35px;
+  background: url(../../images/icon__menu-on.svg) no-repeat center border-box;
+  padding: 0;
+  border: none;
+  background-size: cover;
+}
+
+.header__menu-button_close {
+  background-image: url(../../images/icon__menu-off.svg);
+}
+
+.header__menu-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-left: 16px;
+}
+
+.header__menu-bar_tablet {
+  display: none;
+  flex-direction: column;
+  width: 65%;
+  height: 1025px;
+  background: #202020;
+  z-index: 5;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.header__autorization {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+
+
+.header__autorization_tablet {
+  margin: 0 0 90px
+}
+
+.header__text {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.33;
+  padding-right: 30px
+}
+
+.header__text_border {
+  border: 2px solid #AAAAAA25;
+  border-radius: 50px;
+  padding: 8px 12px;
+}
+
+.header__text_link-activ {
+  background-color: #3DDC84;
+  padding: 8px 20px;
+  color: black;
+}
+
+.header__accaunt-icon {
+  width: 12px;
+  height: 14px;
+  margin-right: 7px;
+}
+
+.popup {
+  display: block;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: #000000b3;
+  z-index: 4;
+}
+
+.popup_closed {
+  visibility: hidden;
+  opacity: 0;
+  transition: all .5s;
+}
+
+.popup_opened {
+  visibility: visible;
+  opacity: 1;
+}
+
+/*tablet*/
+@media screen and (max-width:768px) {
+  .header {
+    padding: 0 30px;
+  }
+
+  .header__menu-button {
+    display: block;
+    z-index: 3;
+  }
+}
+
+@media screen and (max-width:425px) {
+  .header {
+    padding: 0 14px;
+  }
+
+  .header__menu-bar_tablet {
+    width: 100%;
+    height: 38%;
+  }
+
+  .header__autorization_tablet {
+    margin-bottom: 46px;
+  }
+
+  .header__text {
+    font-size: 10px;
+    padding-right: 14px
+  }
+
+  .header__text_link-activ {
+    padding: 5px 12px;
+  }
+}
