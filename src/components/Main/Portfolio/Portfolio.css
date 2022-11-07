@@ -18,7 +18,7 @@
   margin: 0;
 }
 
-.portfolio__link {
+.portfolio__content {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -26,8 +26,19 @@
   border-bottom: 1px solid #424242;
 }
 
-.portfolio__link:nth-last-child(1) {
+.portfolio__content:nth-last-child(1) {
   border-bottom: 0px;
+}
+
+.portfolio__link {
+  height: fit-content;
+  margin-top: 27px;
+}
+
+.portfolio__image-link {
+  width: 18px;
+  height: 18px;
+  object-fit: cover;
 }
 
 .portfolio__text {
@@ -65,5 +76,10 @@
 
   .portfolio__text {
     font-size: 18px;
+  }
+
+  .portfolio__image-link {
+    width: 14px;
+    height: 14px;
   }
 }
