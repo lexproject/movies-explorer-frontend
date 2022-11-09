@@ -86,7 +86,7 @@
 }
 
 .preloader__round::before {
-  z-index: 10;
+  z-index: 4;
   background: url(../../images/logo.svg) no-repeat center border-box;
   background-size: contain;
   animation: preloader-inside-red 1s ease-in-out infinite;

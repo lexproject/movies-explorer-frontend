@@ -11,7 +11,7 @@ function SearchForm(props) {
           className='interactiv-element searh-form__input'
           placeholder='Фильмы'
           required />
-        <button type='button' className='interactiv-element searh-form__button'>Найти</button>
+        <button type='submit' className='interactiv-element searh-form__button'>Найти</button>
       </div>
       <div className='searh-form__field'>
         <label className='interactiv-element searh-form__switch'>

@@ -25,7 +25,7 @@
   width: 722px;
   height: 244px;
   background: url(../../../images/landing-logo.svg) center no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
 /*Tablet*/
@@ -39,7 +39,7 @@
   .promo__logo {
     align-self: auto;
     margin: 140px 44px 70px;
-    width: 100%;
+    width: 680px;
     height: 230px;
   }
   .promo__title {
@@ -50,7 +50,7 @@
 }
 
 /*media320*/
-@media screen and (max-width:425px) {
+@media screen and (max-width:600px) {
   .promo {
     max-height: none;
     padding: 0 10px;
@@ -62,7 +62,7 @@
   }
 
   .promo__logo {
-    margin: 110px 10px;
-    height: 105px;
+    margin:50px 10px;
+    max-width: 100%;
   }
 }

@@ -8,10 +8,7 @@ const Autorization = (props) => {
       <Logo modClass={'sign'}/>
       <h2 className='autorization__title'>{props.titleText}</h2>
       <form
-        className='autorization__form'
-        name='sign-form'
-        action='index.html'
-        method='post'>
+        className='autorization__form'>
         {props.children}
       </form>
       <button

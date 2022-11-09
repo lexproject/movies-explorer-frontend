@@ -1,15 +1,16 @@
 import { NavLink } from 'react-router-dom';
 import './Navigation.css';
+import accaunt from '../../images/accaunt-button.svg'
 
-const Navigation = ({ clicMenu }) => {
-  let screenWidth = window.screen.width;console.log(screenWidth);
+const Navigation = ({ clicMenu, togleMenu }) => {
   return (
-    <nav className='menu'>
-      {(screenWidth < 769) && <NavLink
+    <nav className='menu'
+      style={{ display: togleMenu && 'flex' }}>
+      <NavLink
         exact to='/'
         onClick={clicMenu}
         activeClassName='interactiv-element menu__link_active'
-        className='link menu__link'>Главная</NavLink>}
+        className='link menu__link menu__link_inactive'>Главная</NavLink>
       <NavLink
         to='/movies'
         onClick={clicMenu}
@@ -20,6 +21,15 @@ const Navigation = ({ clicMenu }) => {
         onClick={clicMenu}
         activeClassName='menu__link_active'
         className='interactiv-element link menu__link'>Сохранённые фильмы</NavLink>
+      <NavLink to='/profile'
+        className='interactiv-element link menu__icon'
+        onClick={clicMenu} >
+        <img
+          src={accaunt}
+          className='menu__image-icon'
+          alt='accaunt' />
+        Аккаунт
+      </NavLink>
 
     </nav>
   );
