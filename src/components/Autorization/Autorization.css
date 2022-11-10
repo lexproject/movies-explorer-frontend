@@ -1,0 +1,117 @@
+.autorization {
+  align-items: flex-start;
+  max-width: 396px;
+  margin: 70px auto;
+  justify-content: flex-start;
+}
+
+.autorization__title {
+  margin: 40px 0 0;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.autorization__form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 18px 0 65px;
+  width: 100%;
+}
+
+.autorization__label {
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 1.2;
+  color: #8B8B8B;
+  padding: 24px 0 0;
+}
+
+.autorization__input {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.22;
+  color: #fff;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #424242;
+  width: 100%;
+  height: 17px;
+  padding: 5px 0 10px;
+  outline: none;
+}
+
+.autorization__input:valid {
+  border-bottom: 1px solid #045433;
+}
+
+.autorization__input:focus {
+  border-bottom: 1px solid #4285F4;
+  background-color: #424242;
+}
+
+.autorization__input_password {
+  color: #EE3465;
+}
+
+.autorization__label_error {
+  color: #EE3465;
+  padding-top: 6px;
+}
+
+.autorization__button {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.1;
+  border: none;
+  padding: 0;
+  background: #4285F4;
+  border-radius: 3px;
+  width: 100%;
+  height: 45px;
+  color: #fff;
+  margin: 70px 0 16px;
+}
+
+.autorization__text {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.22;
+  color: #8B8B8B;
+  align-self: center;
+  margin: 0;
+}
+
+.autorization__text_link {
+  color: #4285F4;
+  padding-left: 6px;
+}
+
+/*media-screen*/
+@media screen and (max-width:768px) {
+  .autorization {
+    margin: 232px auto;
+  }
+}
+
+@media screen and (max-width:425px) {
+  .autorization {
+    margin: 56px 30px 30px;
+  }
+
+  .autorization__button {
+    font-size: 12px;
+    margin-top: 150px;
+  }
+
+  .autorization__title {
+    margin: 50px auto 40px;
+  }
+
+  .autorization__text {
+    font-size: 12px;
+  }
+}

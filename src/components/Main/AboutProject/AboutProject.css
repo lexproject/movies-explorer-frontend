@@ -1,0 +1,146 @@
+.project {
+  padding: 110px 70px;
+  box-sizing: border-box;
+}
+
+.project__list {
+  display: flex;
+  flex-direction: row;
+  margin-top: 70px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.project__table {
+  width: 50%;
+  max-width: 550px;
+  height: auto;
+  margin-bottom: 105px;
+}
+
+.project__table_left {
+  margin-right: 20px;
+}
+
+.project__table-title {
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+  padding-bottom: 26px;
+  margin: 0;
+}
+
+.project__table-text {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.43;
+  margin: 0;
+}
+
+.project__etaps {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.project__etap {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  color: #8B8B8B;
+}
+
+.project__etap-text {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.project__etap-text_bold {
+  font-weight: 500;
+}
+
+.project__etap_backend {
+  width: 20%;
+}
+
+.project__etap_small {
+  background-color: #3DDC84;
+  color: black;
+}
+
+.project__etap_big {
+  background-color: #303030;
+  color: white;
+}
+
+.project__etap-padding {
+  padding: 9px 0;
+}
+
+/*media-screen*/
+
+@media screen and (max-width:768px) {
+  .project {
+    padding: 85px 50px;
+  }
+
+  .project__table {
+    margin-bottom: 93px;
+  }
+
+  .project__table-title {
+    padding-bottom: 22px;
+  }
+}
+
+@media screen and (max-width:600px) {
+  .project {
+    padding: 70px 18px;
+  }
+
+  .project__table {
+    width: 100%;
+    margin-bottom: 60px;
+  }
+
+  .project__table_left {
+    margin-right: 0;
+  }
+
+  .project__table-title {
+    padding-bottom: 16px;
+    font-size: 18px;
+  }
+
+  .project__etap-text {
+    font-size: 11px;
+    line-height: 13px;
+  }
+
+  .project__list {
+    flex-direction: column;
+    margin-top: 60px;
+  }
+
+  .project__table-text {
+    font-size: 11px;
+  }
+
+  .project__etap {
+    width: 65%;
+  }
+
+  .project__etap_backend {
+    width: 35%;
+  }
+
+  .project__etap-padding {
+    padding: 12px 0;
+  }
+}
