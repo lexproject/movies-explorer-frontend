@@ -1,18 +1,20 @@
 import { useEffect, memo } from 'react';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import './PageNotFound.css';
 
 const PageNotFound = memo((props) => {
+
+  const history = useHistory();
   useEffect(() => {
     props.chekCurrentRoute('/sign');
-  }, [props]);
+  }, []);
 
   return (
     <div className='blank-page'>
       <h3 className='not-found__title'>404</h3>
       <p className='not-found__text'>Страница не найдена</p>
-      <Link className='interactiv-element not-found__link' to='/'>Назад</Link>
+      <span className='interactiv-element not-found__link' onClick={() => history.goBack()}>Назад</span>
     </div>
   )
 })

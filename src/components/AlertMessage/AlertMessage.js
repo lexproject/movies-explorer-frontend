@@ -1,26 +1,24 @@
 import { useEffect, useState } from 'react';
 import './AlertMessage.css';
 
-const AlertMessage = (props) => {
-  const [isError, setIsError] = useState(true);
+const AlertMessage = ({ message }) => {
+
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsError(false)
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [props, isError]);
+    setIsError((message!==''));
+  }, [message]);
 
-  function changeStatusMessage() {
+  function clearMessage() {
     setIsError(false)
   }
 
   return (
     <div className={`alert-message ${isError && 'alert-message_active'}`}>
-    <button className='alert-message__button' onClick={changeStatusMessage}></button>
-      <h2 className='alert-message__title'> Что-то пошло не так!</h2>
-      <p className='alert-message__text'>{props.message}</p>
-      </div>
+      <button className='alert-message__button' onClick={clearMessage}></button>
+      <h2 className='alert-message__title'> Внимание!</h2>
+      <p className='alert-message__text'>{message}</p>
+    </div>
   )
 }
 

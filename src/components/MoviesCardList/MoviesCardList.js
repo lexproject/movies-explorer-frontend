@@ -1,18 +1,23 @@
 import './MoviesCardList.css';
 import MoviesCard from '../MoviesCard/MoviesCard';
+import { memo } from 'react';
 
-function MoviesCardList(props) {
+const MoviesCardList = memo((props) => {
+
+
   return (
       <ul className='movies-card-list'>
-        {props.movies.map(item => (
+        {props.movies.map((item, index )=>{
+         return (index < props.countRender) &&
           <MoviesCard
-            key={item.id}
+            key={item.movieId}
             movie={item}
             isSaved={props.isSaved}
-          />
-        ))}
+            onMovieCardClick={props.onMovieCardClick}
+          />}
+        )}
       </ul>
   );
-}
+})
 
 export default MoviesCardList;

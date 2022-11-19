@@ -1,62 +1,111 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState, useContext } from 'react';
+import { useRouteMatch } from 'react-router-dom';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import './Profile.css';
+import { useValidation } from '../../utils/Validation';
 
 function Profile(props) {
-  const [isInput, setIsInput] = useState(false);
-  useEffect(() => {
-    props.chekCurrentRoute('/profile');
-  }, [props]);
 
-  const handlerInput = () => { setIsInput(!isInput) }
+  const { path } = useRouteMatch();
+  const { handleChange, values, errors, resetForm, isValid } = useValidation();
+  const currentUser = useContext(CurrentUserContext);
+  const [onEdit, setOnEdit] = useState(false);
+  const errorsMessage = errors.email !== '' ? errors.prompt.email : errors.prompt.name;
+  const isRepeat = (values.name === currentUser.name && values.email === currentUser.email);
+  const errorActive = (errors.email !== '' || errors.name !== '')
+
+  function onSubmitForm(e) {
+    e.preventDefault();
+    const { name, email } = values;
+    props.onUpdateUser({ name, email });
+    resetForm();
+  }
+
+  useEffect(() => {
+    props.chekCurrentRoute(path);
+  }, [path, props]);
+
+  const handlerInput = () => {
+    setOnEdit(!onEdit)
+  }
 
   return (
     <div className='profile'>
-      <h2 className='profile__title'>Привет, Виталий!</h2>
-      <form id='profile-form' className='profile__container'>
+      <h2 className='profile__title'>Привет, {currentUser.name}!</h2>
+      <form
+        id='profile-form'
+        className='profile__container'
+        onSubmit={onSubmitForm}
+      >
         <div className='profile__info profile__info_bottom-line'>
           <label className='profile__info-user profile__info-user_label'>Имя</label>
           <input
-            className={`profile__input ${isInput && 'profile__input_active interactiv-element'}`}
+            className={`profile__input ${onEdit && 'profile__input_active interactiv-element'}`}
+            value={values.name}
+            onChange={handleChange}
             type='text'
             name='name'
-            //value={props.name}
             id='profile-name-input'
             placeholder='Имя'
+            pattern='^[A-Za-zА-Яа-яЁё\s-]+$'
             minLength='2'
             maxLength='30'
-            />
+            required
+          />
           <p
-            className={`profile__info-user ${isInput && 'profile__info-user_invisible'}`}>
-            {props.name}
+            className={`profile__info-user ${onEdit && 'profile__info-user_invisible'}`}>
+            {currentUser.name}
           </p>
         </div>
+
         <div className='profile__info'>
           <label className='profile__info-user profile__info-user_label'>E-mail</label>
           <input
-            className={`profile__input ${isInput && 'profile__input_active interactiv-element'}`}
+            className={`profile__input ${onEdit && 'profile__input_active interactiv-element'}`}
             type='email'
             name='email'
-            //value={props.email}
+            value={values.email}
+            onChange={handleChange}
+            pattern="([A-z0-9_.-]{1,})@([A-z0-9_.-]{1,}).([A-z]{2,8})"
             id='profile-email-input'
             placeholder='Email'
             autoComplete='on'
-            />
+            required
+          />
           <p
-            className={`profile__info-user ${isInput && 'profile__info-user_invisible'}`}>
-            {props.email}
+            className={`profile__info-user ${onEdit && 'profile__info-user_invisible'}`}>
+            {currentUser.email}
           </p>
         </div>
       </form>
+
+      <span
+        className='autorization__label autorization__label_error'
+        style={{ opacity: (errorActive || isRepeat) && 1 }} >
+        {isRepeat ? errors.prompt.repeat : errorsMessage}
+      </span>
+
       <button
         form='profile-form'
-        type={isInput ? 'button' : 'submit'}
-        className={`interactiv-element profile__button ${isInput && 'profile__button_submit'}`}
-        onClick={handlerInput}>
-        {isInput ? 'Сохранить' : 'Редактировать'}
+        type={onEdit ? 'button' : 'submit'}
+        className={`interactiv-element profile__button ${onEdit && 'profile__button_submit'}`}
+        style={{
+          background: (!isValid || isRepeat) && '#262525',
+          color: (!isValid || isRepeat) && '#444',
+          cursor: (!isValid || isRepeat) && 'auto'
+        }}
+        onClick={handlerInput}
+        disabled={onEdit && (!isValid || isRepeat)}>
+        {onEdit ? 'Сохранить' : 'Редактировать'}
       </button>
 
-      <Link to='/' className='interactiv-element link profile__exit'>Выйти из аккаунта</Link>
+      <button
+        type='button'
+        onClick={props.onSignOut}
+        className="interactiv-element profile__button profile__button_exit"
+        aria-label='Выйти'>
+        Выйти из аккаунта
+      </button>
     </div>
   );
 }

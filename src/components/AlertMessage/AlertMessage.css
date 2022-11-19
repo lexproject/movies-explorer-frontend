@@ -3,17 +3,17 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  background-color: #00041494;
-  width: 70%;
-  height: auto;
+  background-color: #000414cf;
+  width: 65%;
+  min-height: 120px;
   border-radius: 22px;
   position: fixed;
-  bottom: 25px;
-  right: 5px;
-  padding: 10px;
+  bottom: 80px;
+  right: 10%;
+  padding: 5px;
   visibility: hidden;
   opacity: 0;
-  transition: all .5s;
+  transition: all 1s;
 }
 
 .alert-message_active {
@@ -23,9 +23,10 @@
 
 .alert-message__title {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
   line-height: 1.2;
+  text-align: center;
 }
 
 .alert-message__text {
@@ -34,9 +35,13 @@
   line-height: 1.5;
   margin: 10px;
   color: red;
+  text-align: center;
 }
 
 .alert-message__button {
+  position: absolute;
+  top: 2px;
+  left: 2px;
   align-self: flex-start;
   background: url(../../images/icon__menu-off.svg) center no-repeat;
   width: 40px;
@@ -53,13 +58,16 @@
   .alert-message__title {
     font-size: 12px;
   }
+
   .alert-message__text {
     font-size: 11px;
   }
+
   .alert-message__button {
     width: 25px;
     height: 25px;
   }
+
   .alert-message {
     padding: 5px;
   }

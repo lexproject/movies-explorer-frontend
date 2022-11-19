@@ -5,16 +5,23 @@ import './Autorization.css'
 const Autorization = (props) => {
   return (
     <div className='blank-page autorization'>
-      <Logo modClass={'sign'}/>
+      <Logo modClass={'sign'} />
       <h2 className='autorization__title'>{props.titleText}</h2>
       <form
-        className='autorization__form'>
+        id='sign-form'
+        action=""
+        method="POST"
+        onSubmit={props.onSubmit}
+        className='autorization__form'
+        disabled={!props.isValid}>
         {props.children}
       </form>
       <button
         type='submit'
         form='sign-form'
-        className='interactiv-element autorization__button'>{props.buttonTex}
+        className={`interactiv-element autorization__button ${!props.isValid && 'autorization__button_disabled'}`}
+        disabled={!props.isValid}
+      >{props.buttonTex}
       </button>
       <p className='autorization__text'>{`${props.questText} зарегистрированы?`}
         <Link
