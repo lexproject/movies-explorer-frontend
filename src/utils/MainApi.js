@@ -88,8 +88,6 @@ class MainApi {
 
 }
 
-
-
 export const mainApi = new MainApi({
   baseUrl: 'https://api.movies.lex.nomoredomains.icu',
   headers: {

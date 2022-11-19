@@ -30,6 +30,7 @@ function App() {
   const [savedMovies, setSavedMovies] = useState([]);
   const [publicMovies, setPublicMovies] = useState([]);
   const [currentUser, setCurrentUser] = useState('');
+  const [isChecked, setIsChecked] = useState(false);
 
 
 
@@ -40,16 +41,16 @@ function App() {
           setLoggedIn(true);
           setCurrentUser(user.data)
           getUserMovies();
-          getInitialMovies();
-          history.push('/movies');
+          getInitialMovies(); console.log('logged');
         }
       })
-      .catch(err => alertErrorMesage(err.message));
+      .catch(err => console.log(err.message)).
+      finally(() => setIsChecked(true));
   }, []);
 
   useEffect(() => {
     onSignIn();
-  }, [onSignIn]);
+  }, []);
 
   function chekCurrentRoute(url) {
     setCurentPage(url);
@@ -79,20 +80,6 @@ function App() {
       .catch(err => alertErrorMesage(err.message));
   }
 
-  function onRegister(dataAuth) {
-    const { password, email, name } = dataAuth;
-    if (!email || !password) { return }
-    mainApi.signup(password, email, name)
-      .then((userData) => {
-        if (userData) {
-          setCurrentUser(userData.data);
-          setLoggedIn(true);
-          history.push('/movies');
-        }
-      })
-      .catch(err => { alertErrorMesage(err.message) });
-  }
-
   function onLogin(dataInput) {
     const { password, email } = dataInput;
     if (!email || !password) { return }
@@ -102,6 +89,18 @@ function App() {
           onSignIn();
           history.push('/movies');
           alertErrorMesage(userData.message);
+        }
+      })
+      .catch(err => { alertErrorMesage(err.message) });
+  }
+
+  function onRegister(dataAuth) {
+    const { password, email, name } = dataAuth;
+    if (!email || !password) { return }
+    mainApi.signup(password, email, name)
+      .then((userData) => {
+        if (userData) {
+          onLogin({ email, password })
         }
       })
       .catch(err => { alertErrorMesage(err.message) });
@@ -135,7 +134,7 @@ function App() {
     return faundMovies;
   }
 
-  function markSavedMovies(arr) {
+  const markSavedMovies = useCallback((arr) => {
     const moviesSpred = arr.map((m) => {
       let save = savedMovies.filter((s) => s.movieId === m.movieId && s);
       if (save.length !== 0) {
@@ -145,7 +144,7 @@ function App() {
       return m;
     });
     return moviesSpred;
-  }
+  }, [savedMovies])
 
   function markDeletedMovies(id) {
     const moviesSpred = publicMovies.map((m) => {
@@ -158,8 +157,8 @@ function App() {
     return moviesSpred;
   }
 
-  ///MainSearh////
-  function searhMainMovies(searhData) {
+  const searhMoviesSubmit = useCallback((searhData) => {
+
     setSearhKeyword(searhData.keyword);
     setShortMovies(searhData.shortMovies);
     setPublicMovies(markSavedMovies(filterMovies({
@@ -167,6 +166,16 @@ function App() {
       keyword: searhData.keyword,
       shortMovies: searhData.shortMovies
     })))
+  }, [initialMovies, markSavedMovies])
+
+  ///MainSearh////
+  function searhMainMovies(searhData) {
+    if (initialMovies.length === 0) {
+      getInitialMovies();
+    }
+    if (initialMovies.length !== 0) {
+      searhMoviesSubmit(searhData);
+    }
   }
 
   const handleMainCheckbox = (isShort) => {
@@ -249,18 +258,13 @@ function App() {
   }
 
   return (
-    <>
+    <>{isChecked &&
       <CurrentUserContext.Provider value={currentUser}>
         <Header
           curentPage={curentPage}
           isAutorizated={loggedIn}
         />
         <Switch>
-          <Route exact path="/">
-            <Main
-              chekCurrentRoute={chekCurrentRoute}
-            />
-          </Route>
           <ProtectedRoute
             path="/movies"
             loggedIn={loggedIn}
@@ -297,15 +301,18 @@ function App() {
             email={currentUser.email}
           />
           <Route path="/signup">
-            <Register
-              chekCurrentRoute={chekCurrentRoute}
-              onSignup={onRegister}
-            />
+            {
+              () => loggedIn ? <Redirect to='/movies' /> : <Register chekCurrentRoute={chekCurrentRoute} onSignup={onRegister} />
+            }
           </Route>
           <Route path="/signin">
-            <Login
+            {
+              () => loggedIn ? <Redirect to='/movies' /> : <Login chekCurrentRoute={chekCurrentRoute} onSignin={onLogin} />
+            }
+          </Route>
+          <Route exact path="/">
+            <Main
               chekCurrentRoute={chekCurrentRoute}
-              onSignin={onLogin}
             />
           </Route>
           <Route path="*">
@@ -318,7 +325,7 @@ function App() {
         <AlertMessage
           message={errorMesage} />
       </CurrentUserContext.Provider>
-    </>
+    }</>
   );
 }
 

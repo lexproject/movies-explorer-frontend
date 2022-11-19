@@ -6,7 +6,7 @@ import { useValidation } from '../../utils/Validation';
 
 function Profile(props) {
 
-  const { path } = useRouteMatch();
+ // const { path } = useRouteMatch();
   const { handleChange, values, errors, resetForm, isValid } = useValidation();
   const currentUser = useContext(CurrentUserContext);
   const [onEdit, setOnEdit] = useState(false);
@@ -22,8 +22,8 @@ function Profile(props) {
   }
 
   useEffect(() => {
-    props.chekCurrentRoute(path);
-  }, [path, props]);
+    props.chekCurrentRoute('movies');
+  }, []);
 
   const handlerInput = () => {
     setOnEdit(!onEdit)
