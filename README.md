@@ -8,5 +8,8 @@ https://disk.yandex.ru/d/tJQHLRlORMxHrA
 https://github.com/lexproject/movies-explorer-frontend/pull/2
 * ссылка на фронтэнд часть проекта 
  https://movies.lex.nomoredomains.icu/movies
+ API сервер backend в сети
+https://api.movies.lex.nomoredomains.icu/
+ip: 158.160.12.149
  
  
