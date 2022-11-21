@@ -1,14 +1,10 @@
-import { useEffect, memo } from 'react';
+import { memo } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import './PageNotFound.css';
 
 const PageNotFound = memo((props) => {
 
   const history = useHistory();
-  useEffect(() => {
-    props.chekCurrentRoute('/sign');
-  }, []);
 
   return (
     <div className='blank-page'>

@@ -1,13 +1,8 @@
-import { useEffect } from 'react';
-import './Login.css';
 import Autorization from '../Autorization/Autorization';
 import { useValidation } from '../../utils/Validation';
+import './Login.css';
 
 function Login(props) {
-  useEffect(() => {
-    props.chekCurrentRoute('/sign');
-  }, [props]);
-
 
   const { handleChange, values, errors, resetForm, isValid } = useValidation();
   function onSubmit(e) {

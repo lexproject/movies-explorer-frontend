@@ -4,7 +4,6 @@ import { memo } from 'react';
 
 const MoviesCardList = memo((props) => {
 
-
   return (
       <ul className='movies-card-list'>
         {props.movies.map((item, index )=>{

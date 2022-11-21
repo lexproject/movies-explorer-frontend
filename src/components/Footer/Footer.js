@@ -1,10 +1,14 @@
+import { useLocation  } from 'react-router-dom';
 import './Footer.css';
 
 function Footer(props) {
+
+  const location = useLocation();
   const year = new Date().getFullYear();
+
   return (
     <footer className='footer'
-      style={{ display: (props.curentPage === '/sign') && 'none' }}>
+      style={{ display: (location.pathname === '/signin'||location.pathname === '/signup') && 'none' }}>
       <p className='footer__text footer__text_info'>Учебный проект Яндекс.Практикум х BeatFilm.</p>
       <div className='footer__info'>
         <p className='footer__text footer__text_year'>© {year}</p>

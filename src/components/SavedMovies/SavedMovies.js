@@ -11,11 +11,7 @@ const SavedMovies = memo((props) => {
 
   useEffect(() => {
     (props.faundUserMovies.length !== 0) && setLoader(false);
-    props.chekCurrentRoute('/movies');
   }, [props]);
-
-  useEffect(() => {
-  }, [props.faundUserMovies]);
 
   return (
     <>
@@ -27,6 +23,7 @@ const SavedMovies = memo((props) => {
         keyword={props.moviesKeyword}
         checkbox={props.moviesShort}
       />
+
       {isLoader ? <Preloader
         isMovies={(props.faundUserMovies.length === 0)} /> :
         <MoviesCardList

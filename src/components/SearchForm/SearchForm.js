@@ -1,12 +1,15 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import './SearchForm.css';
 
 function SearchForm(props) {
-
+  const [checked, setChecked] = useState(props.checkbox=== 'true'? true :false);
   const searhRef = useRef(null);
   const checRef = useRef(null);
 
-  const hundleCheckbox = () => props.checkboxStatus(checRef.current.checked);
+  const hundleCheckbox = (e) => {
+    setChecked(!checked);
+    props.checkboxStatus(checRef.current.checked);
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -17,7 +20,7 @@ function SearchForm(props) {
   }
 
   return (
-    <form className='searh-form'>
+    <form className='searh-form' onSubmit={handleSubmit}>
       <div className='searh-form__field'>
         <input
           type='search'
@@ -31,7 +34,6 @@ function SearchForm(props) {
         <button
           type='submit'
           className='interactiv-element searh-form__button'
-          onClick={handleSubmit}
         >Найти</button>
       </div>
       <div className='searh-form__field'>
@@ -40,8 +42,8 @@ function SearchForm(props) {
             className='searh-form__checkbox'
             type='checkbox'
             ref={checRef}
-            defaultChecked={props.checkbox}
-            onClick={hundleCheckbox} />
+            checked={checked}
+            onChange={hundleCheckbox} />
           <span className='searh-form__slider'></span>
         </label>
         <p className='searh-form__text'>Короткометражки</p>

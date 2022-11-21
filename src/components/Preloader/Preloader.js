@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from 'react'
-import './Preloader.css'
+import React, { useEffect, useState } from 'react';
+import './Preloader.css';
 
 const Preloader = ({isMovies}) => {
 
-
   const [searhStatus, setSearhStatus] = useState(false);
-
 useEffect(()=>{
   const timer = setTimeout(()=>{
-    setSearhStatus(isMovies);},1500)
+    setSearhStatus(isMovies);},1000)
   return ()=>{
-    setSearhStatus(false);
+    //setSearhStatus(false);
     clearTimeout(timer);}},[])
   return (
     <div className='preloader'>

@@ -1,12 +1,10 @@
-import { useEffect, useState, useContext } from 'react';
-import { useRouteMatch } from 'react-router-dom';
+import { useState, useContext } from 'react';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import './Profile.css';
 import { useValidation } from '../../utils/Validation';
 
 function Profile(props) {
 
- // const { path } = useRouteMatch();
   const { handleChange, values, errors, resetForm, isValid } = useValidation();
   const currentUser = useContext(CurrentUserContext);
   const [onEdit, setOnEdit] = useState(false);
@@ -20,12 +18,7 @@ function Profile(props) {
     props.onUpdateUser({ name, email });
     resetForm();
   }
-
-  useEffect(() => {
-    props.chekCurrentRoute('movies');
-  }, []);
-
-  const handlerInput = () => {
+ const handlerInput = () => {
     setOnEdit(!onEdit)
   }
 

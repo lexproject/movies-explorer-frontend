@@ -19,42 +19,59 @@ import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 function App() {
   const history = useHistory();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [curentPage, setCurentPage] = useState('/');
-  const [initialMovies, setInitialMovies] = useState([]);
-  const [searhKeyword, setSearhKeyword] = useState('');
-  const [shortMovies, setShortMovies] = useState(false);
-  const [userKeyword, setUserKeyword] = useState('');
-  const [userShort, setUserShort] = useState(false);
   const [errorMesage, setErrorMesage] = useState('');
-  const [userMovies, setUserMovies] = useState([]);
-  const [savedMovies, setSavedMovies] = useState([]);
-  const [publicMovies, setPublicMovies] = useState([]);
   const [currentUser, setCurrentUser] = useState('');
   const [isChecked, setIsChecked] = useState(false);
+  const [bestFilmKeyword, setBestFilmKeyword] = useState((localStorage.getItem('bestFilmKeyword') === null) ? '' : localStorage.getItem('bestFilmKeyword'));
+  const [userFilmKeyword, setUserFilmKeyword] = useState((localStorage.getItem('userFilmKeyword') === null) ? '' : localStorage.getItem('userFilmKeyword'));
+  const [userCheckbox, setUserCheckbox] = useState(localStorage.userCheckbox);
+  const [mainCheckbox, setMainCheckbox] = useState(localStorage.mainCheckbox);
+  const [mainMovies, setMainMovies] = useState(Array.isArray(JSON.parse(localStorage.getItem("mainMovies"))) ? JSON.parse(localStorage.getItem("mainMovies")) : []);
+  const [userSavedMovies, setUserSavedMovies] = useState(Array.isArray(JSON.parse(localStorage.getItem("userSavedMovies"))) ? JSON.parse(localStorage.getItem("userSavedMovies")) : []);
+  const [showMainMovies, setShowMainMovies] = useState(Array.isArray(JSON.parse(localStorage.getItem("showMainMovies"))) ? JSON.parse(localStorage.getItem("showMainMovies")) : []);
+  const [showSavedMovies, setShowSavedMovies] = useState(Array.isArray(JSON.parse(localStorage.getItem("showSavedMovies"))) ? JSON.parse(localStorage.getItem("showSavedMovies")) : []);
 
+  useEffect(() => {
+    setBestFilmKeyword(localStorage.getItem('bestFilmKeyword'));
+    setUserFilmKeyword(localStorage.getItem('userFilmKeyword'));
+    setUserCheckbox(localStorage.userCheckbox);
+    setMainCheckbox(localStorage.mainCheckbox);
+    setMainMovies(JSON.parse(localStorage.getItem("mainMovies")));
+    setUserSavedMovies(JSON.parse(localStorage.getItem("userSavedMovies")));
+    setShowMainMovies(JSON.parse(localStorage.getItem("showMainMovies")));
+    setShowSavedMovies(JSON.parse(localStorage.getItem("showSavedMovies")));
+  }, []);
 
+  useEffect(() => {
+    localStorage.setItem('bestFilmKeyword', bestFilmKeyword);
+    localStorage.setItem('userFilmKeyword', userFilmKeyword);
+    localStorage.userCheckbox = userCheckbox;
+    localStorage.mainCheckbox = mainCheckbox;
+  }, [userCheckbox, mainCheckbox, bestFilmKeyword, userFilmKeyword]);
+
+  useEffect(() => {
+    localStorage.setItem('mainMovies', JSON.stringify(mainMovies));
+    localStorage.setItem('userSavedMovies', JSON.stringify(userSavedMovies));
+    localStorage.setItem('showMainMovies', JSON.stringify(showMainMovies));
+    localStorage.setItem('showSavedMovies', JSON.stringify(showSavedMovies));
+  }, [mainMovies, userSavedMovies, showMainMovies, showSavedMovies]);
+
+  //////////////////////////////////
 
   const onSignIn = useCallback(() => {
     mainApi.getUserMe()
       .then((user) => {
         if (user) {
           setLoggedIn(true);
-          setCurrentUser(user.data)
+          setCurrentUser(user.data);
           getUserMovies();
-          getInitialMovies(); console.log('logged');
         }
       })
-      .catch(err => console.log(err.message)).
-      finally(() => setIsChecked(true));
+      .catch(err => console.log(err.message))
+      .finally(() => setIsChecked(true));
   }, []);
 
-  useEffect(() => {
-    onSignIn();
-  }, []);
-
-  function chekCurrentRoute(url) {
-    setCurentPage(url);
-  }
+  useEffect(() => { onSignIn() }, [onSignIn]);
 
   const Sync2Id = (movie) => {
     movie.movieId = movie.id;
@@ -66,17 +83,7 @@ function App() {
 
   const getUserMovies = () => {
     mainApi.getUserMovies()
-      .then(movie => setSavedMovies(movie.data))
-      .catch(err => alertErrorMesage(err.message));
-  }
-
-  function getInitialMovies() {
-    moviesApi.getMovies()
-      .then((movies) => {
-        if (movies) {
-          setInitialMovies(movies.map((movie) => Sync2Id(movie)));
-        }
-      })
+      .then(movie => setUserSavedMovies(movie.data))
       .catch(err => alertErrorMesage(err.message));
   }
 
@@ -110,13 +117,14 @@ function App() {
     mainApi.getOut()
       .then((res) => {
         setLoggedIn(false);
+        localStorage.clear();
         history.push('/');
         alertErrorMesage(res.message)
       })
       .catch(err => { alertErrorMesage(err.message) });
   }
 
-  ////Filter///
+  ////FilterSearh///
   const filterMovies = (list) => {
     const listMovies = list.moviesData;
     const shortMovies = list.shortMovies;
@@ -136,7 +144,7 @@ function App() {
 
   const markSavedMovies = useCallback((arr) => {
     const moviesSpred = arr.map((m) => {
-      let save = savedMovies.filter((s) => s.movieId === m.movieId && s);
+      let save = userSavedMovies.filter((s) => s.movieId === m.movieId && s);
       if (save.length !== 0) {
         m.owner = save[0].owner;
         m._id = save[0]._id;
@@ -144,10 +152,10 @@ function App() {
       return m;
     });
     return moviesSpred;
-  }, [savedMovies])
+  }, [userSavedMovies])
 
   function markDeletedMovies(id) {
-    const moviesSpred = publicMovies.map((m) => {
+    const moviesSpred = showMainMovies.map((m) => {
       if (m._id === id) {
         delete m.owner;
         delete m._id;
@@ -157,53 +165,67 @@ function App() {
     return moviesSpred;
   }
 
-  const searhMoviesSubmit = useCallback((searhData) => {
-
-    setSearhKeyword(searhData.keyword);
-    setShortMovies(searhData.shortMovies);
-    setPublicMovies(markSavedMovies(filterMovies({
-      moviesData: initialMovies,
+  ///MainSearh////
+  const searhMoviesSubmit = (searhData, movies) => {
+    const filtredMovies = markSavedMovies(filterMovies({
+      moviesData: movies,
       keyword: searhData.keyword,
       shortMovies: searhData.shortMovies
-    })))
-  }, [initialMovies, markSavedMovies])
+    }));
+    setShowMainMovies(filtredMovies);
+  }
 
-  ///MainSearh////
   function searhMainMovies(searhData) {
-    if (initialMovies.length === 0) {
-      getInitialMovies();
-    }
-    if (initialMovies.length !== 0) {
-      searhMoviesSubmit(searhData);
+    const { keyword, shortMovies } = searhData;
+    if (mainMovies.length === 0) {
+      moviesApi.getMovies()
+        .then((movies) => {
+          if (movies) {
+            setMainCheckbox(shortMovies);
+            setBestFilmKeyword(keyword);
+            const bestMovies = movies.map((movie) => Sync2Id(movie));
+            setMainMovies(bestMovies);
+            searhMoviesSubmit(searhData, bestMovies);
+          }
+        })
+        .catch(err => alertErrorMesage(err.message));
+    } else {
+      setMainCheckbox(shortMovies);
+      setBestFilmKeyword(keyword);
+      searhMoviesSubmit(searhData, mainMovies);
     }
   }
 
   const handleMainCheckbox = (isShort) => {
-    setShortMovies(isShort);
-    setPublicMovies(markSavedMovies(filterMovies({
-      moviesData: initialMovies,
-      keyword: searhKeyword,
+    setMainCheckbox(isShort);
+    const filtredMovies = markSavedMovies(filterMovies({
+      moviesData: mainMovies,
+      keyword: bestFilmKeyword,
       shortMovies: isShort
-    })));
-  }
-  ///SavedPageSearh///
-  const searhUserMovies = (searhArg) => {
-    setUserKeyword(searhArg.keyword);
-    setUserShort(searhArg.shortMovies);
-    setUserMovies(filterMovies({
-      moviesData: savedMovies,
-      keyword: searhArg.keyword,
-      shortMovies: searhArg.shortMovies
     }));
+    setShowMainMovies(filtredMovies);
   }
 
-  const handleUserCheckbox = (isShort) => {
-    setUserShort(isShort);
-    setUserMovies(filterMovies({
-      moviesData: savedMovies,
-      keyword: userKeyword,
-      shortMovies: isShort
-    }));
+  ///SavedSearh///
+  function searhUserMovies(searhUser) {
+    setUserFilmKeyword(searhUser.keyword);
+    setUserCheckbox(searhUser.shortMovies);
+    const filtreUserdMovies = filterMovies({
+      moviesData: userSavedMovies,
+      keyword: searhUser.keyword,
+      shortMovies: searhUser.shortMovies
+    });
+    setShowSavedMovies(filtreUserdMovies);
+  }
+
+  const handleUserCheckbox = (isUserShort) => {
+    setUserCheckbox(isUserShort);
+    const filtreUserdMovies = filterMovies({
+      moviesData: userSavedMovies,
+      keyword: userFilmKeyword,
+      shortMovies: isUserShort
+    });
+    setShowSavedMovies(filtreUserdMovies);
   }
 
   ///AlertMessage////
@@ -217,9 +239,9 @@ function App() {
   function deleteMovie(moviedata) {
     mainApi.deleteMovie(moviedata)
       .then((movieDelete) => {
-        setSavedMovies(savedMovies => savedMovies.filter(m => m._id !== moviedata));
-        setUserMovies(userMovies => userMovies.filter(m => m._id !== moviedata));
-        setPublicMovies(markDeletedMovies(moviedata));
+        setUserSavedMovies(userSavedMovies => userSavedMovies.filter(m => m._id !== moviedata));
+        setShowSavedMovies(showSavedMovies => showSavedMovies.filter(m => m._id !== moviedata));
+        setShowMainMovies(markDeletedMovies(moviedata));
         alertErrorMesage(movieDelete.message);
       })
       .catch(err => {
@@ -229,13 +251,13 @@ function App() {
   }
   ///Save Movies///
   function addMovie(moviedata) {
-    (savedMovies.some(m => m.movieId === moviedata.movieId)) ?
+    (userSavedMovies.some(m => m.movieId === moviedata.movieId)) ?
       alertErrorMesage('Фильм ' + moviedata.nameRU + ' уже добавлен в избранные.') :
       mainApi.setNewMovie(moviedata)
         .then((movieSaved) => {
           const newMovie = movieSaved.data;
-          setSavedMovies([newMovie, ...savedMovies]);
-          setPublicMovies(publicMovies => publicMovies.map(m => { if (newMovie.movieId === m.movieId) { m._id = newMovie._id; } return m }));
+          setUserSavedMovies([newMovie, ...userSavedMovies]);
+          setShowMainMovies(showMainMovies => showMainMovies.map(m => { if (newMovie.movieId === m.movieId) { m._id = newMovie._id; } return m }))
           alertErrorMesage('Фильм ' + movieSaved.data.nameRU + ' помещён в избранное.');
         })
         .catch(err => {
@@ -260,41 +282,35 @@ function App() {
   return (
     <>{isChecked &&
       <CurrentUserContext.Provider value={currentUser}>
-        <Header
-          curentPage={curentPage}
-          isAutorizated={loggedIn}
-        />
+        <Header isAutorizated={loggedIn} />
         <Switch>
           <ProtectedRoute
             path="/movies"
             loggedIn={loggedIn}
             component={Movies}
-            chekCurrentRoute={chekCurrentRoute}
             searhMovies={searhMainMovies}
-            updateMovies={publicMovies}
+            updateMovies={showMainMovies}
             alertMessage={alertErrorMesage}
             handleCheckboxStatus={handleMainCheckbox}
-            moviesKeyword={searhKeyword}
-            moviesShort={shortMovies}
+            moviesKeyword={bestFilmKeyword}
+            moviesShort={mainCheckbox}
             onMovieCardClick={hundleMovieCardButton} />
           <ProtectedRoute
             path="/saved-movies"
             loggedIn={loggedIn}
             component={SavedMovies}
-            chekCurrentRoute={chekCurrentRoute}
             searhUserMovies={searhUserMovies}
-            faundUserMovies={userMovies}
+            faundUserMovies={showSavedMovies}
             alertMessage={alertErrorMesage}
             handleCheckboxStatus={handleUserCheckbox}
-            moviesKeyword={userKeyword}
-            moviesShort={userShort}
+            moviesKeyword={userFilmKeyword}
+            moviesShort={userCheckbox}
             onMovieCardClick={hundleMovieCardButton}
           />
           <ProtectedRoute
             path="/profile"
             loggedIn={loggedIn}
             component={Profile}
-            chekCurrentRoute={chekCurrentRoute}
             onUpdateUser={onUpdateUser}
             onSignOut={onSignOut}
             name={currentUser.name}
@@ -302,28 +318,23 @@ function App() {
           />
           <Route path="/signup">
             {
-              () => loggedIn ? <Redirect to='/movies' /> : <Register chekCurrentRoute={chekCurrentRoute} onSignup={onRegister} />
+              () => loggedIn ? <Redirect to='/movies' /> : <Register onSignup={onRegister} />
             }
           </Route>
           <Route path="/signin">
             {
-              () => loggedIn ? <Redirect to='/movies' /> : <Login chekCurrentRoute={chekCurrentRoute} onSignin={onLogin} />
+              () => loggedIn ? <Redirect to='/movies' /> : <Login onSignin={onLogin} />
             }
           </Route>
           <Route exact path="/">
-            <Main
-              chekCurrentRoute={chekCurrentRoute}
-            />
+            <Main />
           </Route>
           <Route path="*">
-            <PageNotFound
-              chekCurrentRoute={chekCurrentRoute} />
+            <PageNotFound />
           </Route>
         </Switch>
-        <Footer
-          curentPage={curentPage} />
-        <AlertMessage
-          message={errorMesage} />
+        <Footer />
+        <AlertMessage message={errorMesage} />
       </CurrentUserContext.Provider>
     }</>
   );

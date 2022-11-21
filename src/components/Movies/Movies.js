@@ -9,7 +9,6 @@ const Movies = memo(({
   updateMovies,
   handleCheckboxStatus,
   alertMessage,
-  chekCurrentRoute,
   searhMovies,
   moviesKeyword,
   moviesShort,
@@ -39,10 +38,9 @@ const Movies = memo(({
   }, [setWindowDimensions, countMovies.init]
   )
 
-  useEffect(() => {//moviesSpred();
+  useEffect(() => {
     (updateMovies.length !== 0) && setLoader(false);
-    chekCurrentRoute('/movies');
-  }, [updateMovies.length, chekCurrentRoute]);
+  }, [updateMovies]);
 
   function hundleMoreMovies() {
     setCountRender(countRender => (countRender + countMovies.add));
@@ -58,6 +56,7 @@ const Movies = memo(({
         keyword={moviesKeyword}
         checkbox={moviesShort}
       />
+
       {isLoader ? <Preloader
         isMovies={(updateMovies.length === 0)} />
         : <>
