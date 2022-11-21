@@ -65,7 +65,7 @@ const Movies = memo(({
             countRender={countRender}
             onMovieCardClick={onMovieCardClick}
             isSaved={false} />
-          {(updateMovies.length > countRender) && <More addMovies={hundleMoreMovies} />}
+          {(updateMovies.length || 0 > countRender) && <More addMovies={hundleMoreMovies} />}
         </>}
     </>
   );

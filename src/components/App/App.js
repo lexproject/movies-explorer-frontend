@@ -26,7 +26,7 @@ function App() {
   const [userFilmKeyword, setUserFilmKeyword] = useState((localStorage.getItem('userFilmKeyword') === null) ? '' : localStorage.getItem('userFilmKeyword'));
   const [userCheckbox, setUserCheckbox] = useState(localStorage.userCheckbox);
   const [mainCheckbox, setMainCheckbox] = useState(localStorage.mainCheckbox);
-  const [mainMovies, setMainMovies] = useState(Array.isArray(JSON.parse(localStorage.getItem("mainMovies"))) ? JSON.parse(localStorage.getItem("mainMovies")) : []);
+  const [mainMovies, setMainMovies] = useState(Array.isArray(JSON.parse(localStorage.getItem("mainMovies"))) === null ? JSON.parse(localStorage.getItem("mainMovies")) : []);
   const [userSavedMovies, setUserSavedMovies] = useState(Array.isArray(JSON.parse(localStorage.getItem("userSavedMovies"))) ? JSON.parse(localStorage.getItem("userSavedMovies")) : []);
   const [showMainMovies, setShowMainMovies] = useState(Array.isArray(JSON.parse(localStorage.getItem("showMainMovies"))) ? JSON.parse(localStorage.getItem("showMainMovies")) : []);
   const [showSavedMovies, setShowSavedMovies] = useState(Array.isArray(JSON.parse(localStorage.getItem("showSavedMovies"))) ? JSON.parse(localStorage.getItem("showSavedMovies")) : []);
@@ -177,7 +177,7 @@ function App() {
 
   function searhMainMovies(searhData) {
     const { keyword, shortMovies } = searhData;
-    if (mainMovies.length === 0) {
+    if (mainMovies === null) {
       moviesApi.getMovies()
         .then((movies) => {
           if (movies) {
@@ -289,10 +289,10 @@ function App() {
             loggedIn={loggedIn}
             component={Movies}
             searhMovies={searhMainMovies}
-            updateMovies={showMainMovies}
+            updateMovies={showMainMovies === null ? [] : showMainMovies}
             alertMessage={alertErrorMesage}
             handleCheckboxStatus={handleMainCheckbox}
-            moviesKeyword={bestFilmKeyword}
+            moviesKeyword={bestFilmKeyword === null ? '' : bestFilmKeyword}
             moviesShort={mainCheckbox}
             onMovieCardClick={hundleMovieCardButton} />
           <ProtectedRoute
@@ -300,10 +300,10 @@ function App() {
             loggedIn={loggedIn}
             component={SavedMovies}
             searhUserMovies={searhUserMovies}
-            faundUserMovies={showSavedMovies}
+            faundUserMovies={showSavedMovies === null ? [] : showSavedMovies}
             alertMessage={alertErrorMesage}
             handleCheckboxStatus={handleUserCheckbox}
-            moviesKeyword={userFilmKeyword}
+            moviesKeyword={userFilmKeyword === null ? '' : userFilmKeyword}
             moviesShort={userCheckbox}
             onMovieCardClick={hundleMovieCardButton}
           />
