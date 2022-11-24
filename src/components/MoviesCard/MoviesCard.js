@@ -21,7 +21,7 @@ function MoviesCard({ movie, isSaved, onMovieCardClick }) {
       nameRU: movie.nameRU,
       nameEN: movie.nameEN,
     };
-    onMovieCardClick(saveMovie,false);
+    onMovieCardClick(saveMovie, false);
     setIsLike(true);
   }
 

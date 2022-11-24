@@ -46,7 +46,7 @@ function Register(props) {
         value={values.email}
         onChange={handleChange}
         placeholder='Email'
-        pattern="([A-z0-9_.-]{1,})@([A-z0-9_.-]{1,}).([A-z]{2,8})"
+        pattern="([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z_-]{2,8})"
         autoComplete='on'
         required />
       <span

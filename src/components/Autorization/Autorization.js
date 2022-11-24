@@ -1,8 +1,11 @@
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '../Logo/Logo';
-import './Autorization.css'
+import { InfoMessageContext } from '../../contexts/InfoMessageContext';
+import './Autorization.css';
 
 const Autorization = (props) => {
+  const infoMessage = useContext(InfoMessageContext);
   return (
     <div className='blank-page autorization'>
       <Logo modClass={'sign'} />
@@ -16,6 +19,7 @@ const Autorization = (props) => {
         disabled={!props.isValid}>
         {props.children}
       </form>
+      <p className='autorization__text'>{infoMessage}</p>
       <button
         type='submit'
         form='sign-form'

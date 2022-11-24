@@ -6,7 +6,7 @@ const AlertMessage = ({ message }) => {
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    setIsError((message!==''));
+    setIsError((message !== ''));
   }, [message]);
 
   function clearMessage() {

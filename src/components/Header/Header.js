@@ -1,5 +1,5 @@
 import { Link, Route } from 'react-router-dom';
-import { useLocation  } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Navigation from '../Navigation/Navigation';
 import Logo from '../Logo/Logo';
 import Popup from '../Popup/Popup';
@@ -15,14 +15,14 @@ const Header = (props) => {
   return (
     <header className='header'
       style={{
-        display: (location.pathname === '/signin'||location.pathname === '/signup') && 'none',
+        display: (location.pathname === '/signin' || location.pathname === '/signup') && 'none',
         backgroundColor: isHome && '#073042'
       }}>
       <Logo modClass={'main'} />
       <button
         className={`interactiv-element header__menu-button ${isTablet && 'header__menu-button_close'}`}
         style={{
-          display: !props.isAutorizated &&  'none'
+          display: !props.isAutorizated && 'none'
         }}
         onClick={handlerMenu} />
       <div
@@ -45,7 +45,7 @@ const Header = (props) => {
             </Route>
           </div>}
       </div>
-     { !props.isAutorizated && <Popup isTablet={isTablet} />}
+      {!props.isAutorizated && <Popup isTablet={isTablet} />}
     </header>
   );
 }

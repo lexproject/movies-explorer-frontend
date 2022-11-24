@@ -12,14 +12,13 @@ const Movies = memo(({
   searhMovies,
   moviesKeyword,
   moviesShort,
-  onMovieCardClick
+  onMovieCardClick,
+  onPreloader,
+  isPreloader
 }) => {
-  const [isLoader, setLoader] = useState(false);
   const [countMovies, setCountMovies] = useState({});
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [countRender, setCountRender] = useState(0);
-
-  const onPreloader = () => { setLoader(true); }
 
   const setWindowDimensions = useCallback(() => {
     setScreenWidth(window.innerWidth);
@@ -38,10 +37,6 @@ const Movies = memo(({
   }, [setWindowDimensions, countMovies.init]
   )
 
-  useEffect(() => {
-    (updateMovies.length !== 0) && setLoader(false);
-  }, [updateMovies]);
-
   function hundleMoreMovies() {
     setCountRender(countRender => (countRender + countMovies.add));
   }
@@ -57,15 +52,14 @@ const Movies = memo(({
         checkbox={moviesShort}
       />
 
-      {isLoader ? <Preloader
-        isMovies={(updateMovies.length === 0)} />
+      {isPreloader ? <Preloader />
         : <>
           <MoviesCardList
             movies={updateMovies}
             countRender={countRender}
             onMovieCardClick={onMovieCardClick}
             isSaved={false} />
-          {(updateMovies.length || 0 > countRender) && <More addMovies={hundleMoreMovies} />}
+          {(updateMovies.length > countRender) && <More addMovies={hundleMoreMovies} />}
         </>}
     </>
   );

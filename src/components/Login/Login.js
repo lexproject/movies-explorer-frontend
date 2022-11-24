@@ -25,7 +25,7 @@ function Login(props) {
       <input
         type='email'
         name='email'
-        pattern="([A-z0-9_.-]{1,})@([A-z0-9_.-]{1,}).([A-z]{2,8})"
+        pattern="([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z_-]{2,8})"
         id='autorization-email-input'
         className='interactiv-element autorization__input'
         value={values.email}

@@ -15,6 +15,7 @@ import AlertMessage from '../AlertMessage/AlertMessage';
 import { moviesApi } from '../../utils/MoviesApi';
 import { mainApi } from '../../utils/MainApi';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import { InfoMessageContext } from '../../contexts/InfoMessageContext';
 
 function App() {
   const history = useHistory();
@@ -22,41 +23,51 @@ function App() {
   const [errorMesage, setErrorMesage] = useState('');
   const [currentUser, setCurrentUser] = useState('');
   const [isChecked, setIsChecked] = useState(false);
-  const [bestFilmKeyword, setBestFilmKeyword] = useState((localStorage.getItem('bestFilmKeyword') === null) ? '' : localStorage.getItem('bestFilmKeyword'));
-  const [userFilmKeyword, setUserFilmKeyword] = useState((localStorage.getItem('userFilmKeyword') === null) ? '' : localStorage.getItem('userFilmKeyword'));
-  const [userCheckbox, setUserCheckbox] = useState(localStorage.userCheckbox);
-  const [mainCheckbox, setMainCheckbox] = useState(localStorage.mainCheckbox);
-  const [mainMovies, setMainMovies] = useState(Array.isArray(JSON.parse(localStorage.getItem("mainMovies"))) === null ? JSON.parse(localStorage.getItem("mainMovies")) : []);
-  const [userSavedMovies, setUserSavedMovies] = useState(Array.isArray(JSON.parse(localStorage.getItem("userSavedMovies"))) ? JSON.parse(localStorage.getItem("userSavedMovies")) : []);
-  const [showMainMovies, setShowMainMovies] = useState(Array.isArray(JSON.parse(localStorage.getItem("showMainMovies"))) ? JSON.parse(localStorage.getItem("showMainMovies")) : []);
-  const [showSavedMovies, setShowSavedMovies] = useState(Array.isArray(JSON.parse(localStorage.getItem("showSavedMovies"))) ? JSON.parse(localStorage.getItem("showSavedMovies")) : []);
+  const [bestFilmKeyword, setBestFilmKeyword] = useState(localStorage.bestFilmKeyword);
+  const [userFilmKeyword, setUserFilmKeyword] = useState('');
+  const [mainCheckbox, setMainCheckbox] = useState(localStorage.mainCheckbox === null ? false : localStorage.mainCheckbox === 'false' ? false : true);
+  const [mainMovies, setMainMovies] = useState(JSON.parse(localStorage.getItem("mainMovies")));
+  const [userSavedMovies, setUserSavedMovies] = useState(JSON.parse(localStorage.getItem("userSavedMovies")));
+  const [showMainMovies, setShowMainMovies] = useState(JSON.parse(localStorage.getItem("showMainMovies")));
+  const [showSavedMovies, setShowSavedMovies] = useState(JSON.parse(localStorage.getItem("userSavedMovies")));
+  const [isLoader, setLoader] = useState(false);
+  const [isSavedLoader, setSavedLoader] = useState(false);
+  const [infoMessage, setInfoMessage] = useState('');
+
 
   useEffect(() => {
-    setBestFilmKeyword(localStorage.getItem('bestFilmKeyword'));
-    setUserFilmKeyword(localStorage.getItem('userFilmKeyword'));
-    setUserCheckbox(localStorage.userCheckbox);
-    setMainCheckbox(localStorage.mainCheckbox);
+    setBestFilmKeyword(localStorage.bestFilmKeyword);
+    setMainCheckbox(localStorage.mainCheckbox === null ? false : localStorage.mainCheckbox === 'false' ? false : true);
     setMainMovies(JSON.parse(localStorage.getItem("mainMovies")));
     setUserSavedMovies(JSON.parse(localStorage.getItem("userSavedMovies")));
     setShowMainMovies(JSON.parse(localStorage.getItem("showMainMovies")));
-    setShowSavedMovies(JSON.parse(localStorage.getItem("showSavedMovies")));
+    setShowSavedMovies(JSON.parse(localStorage.getItem("userSavedMovies")));
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('bestFilmKeyword', bestFilmKeyword);
-    localStorage.setItem('userFilmKeyword', userFilmKeyword);
-    localStorage.userCheckbox = userCheckbox;
+    localStorage.bestFilmKeyword = bestFilmKeyword;
     localStorage.mainCheckbox = mainCheckbox;
-  }, [userCheckbox, mainCheckbox, bestFilmKeyword, userFilmKeyword]);
+  }, [mainCheckbox, bestFilmKeyword]);
 
   useEffect(() => {
     localStorage.setItem('mainMovies', JSON.stringify(mainMovies));
     localStorage.setItem('userSavedMovies', JSON.stringify(userSavedMovies));
     localStorage.setItem('showMainMovies', JSON.stringify(showMainMovies));
-    localStorage.setItem('showSavedMovies', JSON.stringify(showSavedMovies));
   }, [mainMovies, userSavedMovies, showMainMovies, showSavedMovies]);
 
   //////////////////////////////////
+  const allOut = () => {
+    setLoggedIn(false);
+    localStorage.clear();
+    setBestFilmKeyword('');
+    setUserFilmKeyword('');
+    setMainCheckbox(null);
+    setMainMovies(null);
+    setUserSavedMovies(null);
+    setShowMainMovies(null);
+    setShowSavedMovies(null);
+    history.push('/');
+  }
 
   const onSignIn = useCallback(() => {
     mainApi.getUserMe()
@@ -67,11 +78,15 @@ function App() {
           getUserMovies();
         }
       })
-      .catch(err => console.log(err.message))
+      .catch(err => {
+        console.log(err.message.slice(12, -2));
+        allOut();
+        alertErrorMesage('Для полного доступа необходима авторизация.')
+      })
       .finally(() => setIsChecked(true));
   }, []);
 
-  useEffect(() => { onSignIn() }, [onSignIn]);
+  useEffect(() => { onSignIn(); setInfoMessage(''); }, [onSignIn]);
 
   const Sync2Id = (movie) => {
     movie.movieId = movie.id;
@@ -84,8 +99,10 @@ function App() {
   const getUserMovies = () => {
     mainApi.getUserMovies()
       .then(movie => setUserSavedMovies(movie.data))
-      .catch(err => alertErrorMesage(err.message));
+      .catch(err => alertErrorMesage(err.message.slice(12, -2)));
   }
+
+  function loadSavedMovies() { searhUserMovies(null) }
 
   function onLogin(dataInput) {
     const { password, email } = dataInput;
@@ -93,12 +110,13 @@ function App() {
     mainApi.signin(password, email)
       .then((userData) => {
         if (userData) {
+          setLoggedIn(true);
           onSignIn();
           history.push('/movies');
           alertErrorMesage(userData.message);
         }
       })
-      .catch(err => { alertErrorMesage(err.message) });
+      .catch(err => { setInfoMessage(err.message.slice(12, -2)) });
   }
 
   function onRegister(dataAuth) {
@@ -110,27 +128,34 @@ function App() {
           onLogin({ email, password })
         }
       })
-      .catch(err => { alertErrorMesage(err.message) });
+      .catch(err => { setInfoMessage(err.message.slice(12, -2)) });
   }
 
   function onSignOut() {
     mainApi.getOut()
       .then((res) => {
-        setLoggedIn(false);
-        localStorage.clear();
-        history.push('/');
+        allOut();
         alertErrorMesage(res.message)
       })
-      .catch(err => { alertErrorMesage(err.message) });
+      .catch(err => { alertErrorMesage(err.message.slice(12, -2)) });
   }
+
+  const onPreloader = () => { setInfoMessage(''); setLoader(true); }
+  const closePreloader = () => {
+    setLoader(false);
+    setSavedLoader(false)
+  };
+  const onSavedPreloader = () => { setInfoMessage(''); setSavedLoader(true); }
+
 
   ////FilterSearh///
   const filterMovies = (list) => {
+    setInfoMessage('');
     const listMovies = list.moviesData;
     const shortMovies = list.shortMovies;
     const keyword = list.keyword;
     let faundMovies = [];
-    if (keyword.length === 0) { return [] }
+    if (keyword === '') { return [] }
     if (shortMovies) {
       faundMovies = listMovies.filter(movie =>
         (movie.duration < 41) && movie.nameRU.includes(keyword) && movie);
@@ -139,6 +164,7 @@ function App() {
       faundMovies = listMovies.filter(movie =>
         (movie.nameRU.toLowerCase().includes(keyword.toLowerCase())) && movie);
     }
+    faundMovies.length === 0 ? setInfoMessage('Ничего не найдено') : closePreloader();
     return faundMovies;
   }
 
@@ -172,10 +198,12 @@ function App() {
       keyword: searhData.keyword,
       shortMovies: searhData.shortMovies
     }));
+
     setShowMainMovies(filtredMovies);
   }
 
   function searhMainMovies(searhData) {
+    setInfoMessage('');
     const { keyword, shortMovies } = searhData;
     if (mainMovies === null) {
       moviesApi.getMovies()
@@ -188,7 +216,10 @@ function App() {
             searhMoviesSubmit(searhData, bestMovies);
           }
         })
-        .catch(err => alertErrorMesage(err.message));
+        .catch(err => {
+          alertErrorMesage(err.message.slice(12, -2));
+          setInfoMessage('«Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз».');
+        });
     } else {
       setMainCheckbox(shortMovies);
       setBestFilmKeyword(keyword);
@@ -198,28 +229,24 @@ function App() {
 
   const handleMainCheckbox = (isShort) => {
     setMainCheckbox(isShort);
-    const filtredMovies = markSavedMovies(filterMovies({
-      moviesData: mainMovies,
-      keyword: bestFilmKeyword,
-      shortMovies: isShort
-    }));
-    setShowMainMovies(filtredMovies);
+    searhMoviesSubmit({ keyword: bestFilmKeyword, shortMovies: isShort }, mainMovies);
   }
 
   ///SavedSearh///
   function searhUserMovies(searhUser) {
-    setUserFilmKeyword(searhUser.keyword);
-    setUserCheckbox(searhUser.shortMovies);
-    const filtreUserdMovies = filterMovies({
-      moviesData: userSavedMovies,
-      keyword: searhUser.keyword,
-      shortMovies: searhUser.shortMovies
-    });
-    setShowSavedMovies(filtreUserdMovies);
+    if (searhUser === null) { setShowSavedMovies(userSavedMovies) }
+    else {
+      setUserFilmKeyword(searhUser.keyword);
+      const filtreUserdMovies = filterMovies({
+        moviesData: userSavedMovies,
+        keyword: searhUser.keyword,
+        shortMovies: searhUser.shortMovies
+      });
+      setShowSavedMovies(filtreUserdMovies);
+    }
   }
 
   const handleUserCheckbox = (isUserShort) => {
-    setUserCheckbox(isUserShort);
     const filtreUserdMovies = filterMovies({
       moviesData: userSavedMovies,
       keyword: userFilmKeyword,
@@ -246,7 +273,7 @@ function App() {
       })
       .catch(err => {
         console.log(err);
-        alertErrorMesage(err.message);
+        alertErrorMesage(err.message.slice(12, -2));
       })
   }
   ///Save Movies///
@@ -262,7 +289,7 @@ function App() {
         })
         .catch(err => {
           console.log(err);
-          alertErrorMesage(err.message);
+          alertErrorMesage(err.message.slice(12, -2));
         })
   }
   ///Like & Dislike///
@@ -276,65 +303,74 @@ function App() {
         setCurrentUser(user.data);
         alertErrorMesage('Данные были успешно редактированы.');
       })
-      .catch(err => alertErrorMesage(err.message))
+      .catch(err => alertErrorMesage(err.message.slice(12, -2)))
   }
 
   return (
     <>{isChecked &&
       <CurrentUserContext.Provider value={currentUser}>
-        <Header isAutorizated={loggedIn} />
-        <Switch>
-          <ProtectedRoute
-            path="/movies"
-            loggedIn={loggedIn}
-            component={Movies}
-            searhMovies={searhMainMovies}
-            updateMovies={showMainMovies === null ? [] : showMainMovies}
-            alertMessage={alertErrorMesage}
-            handleCheckboxStatus={handleMainCheckbox}
-            moviesKeyword={bestFilmKeyword === null ? '' : bestFilmKeyword}
-            moviesShort={mainCheckbox}
-            onMovieCardClick={hundleMovieCardButton} />
-          <ProtectedRoute
-            path="/saved-movies"
-            loggedIn={loggedIn}
-            component={SavedMovies}
-            searhUserMovies={searhUserMovies}
-            faundUserMovies={showSavedMovies === null ? [] : showSavedMovies}
-            alertMessage={alertErrorMesage}
-            handleCheckboxStatus={handleUserCheckbox}
-            moviesKeyword={userFilmKeyword === null ? '' : userFilmKeyword}
-            moviesShort={userCheckbox}
-            onMovieCardClick={hundleMovieCardButton}
-          />
-          <ProtectedRoute
-            path="/profile"
-            loggedIn={loggedIn}
-            component={Profile}
-            onUpdateUser={onUpdateUser}
-            onSignOut={onSignOut}
-            name={currentUser.name}
-            email={currentUser.email}
-          />
-          <Route path="/signup">
-            {
-              () => loggedIn ? <Redirect to='/movies' /> : <Register onSignup={onRegister} />
-            }
-          </Route>
-          <Route path="/signin">
-            {
-              () => loggedIn ? <Redirect to='/movies' /> : <Login onSignin={onLogin} />
-            }
-          </Route>
-          <Route exact path="/">
-            <Main />
-          </Route>
-          <Route path="*">
-            <PageNotFound />
-          </Route>
-        </Switch>
-        <Footer />
-        <AlertMessage message={errorMesage} />
+        <InfoMessageContext.Provider value={infoMessage}>
+          <Header isAutorizated={loggedIn} />
+          <Switch>
+            <ProtectedRoute
+              path="/movies"
+              loggedIn={loggedIn}
+              component={Movies}
+              searhMovies={searhMainMovies}
+              updateMovies={showMainMovies === null ? [] : showMainMovies}
+              alertMessage={alertErrorMesage}
+              handleCheckboxStatus={handleMainCheckbox}
+              moviesKeyword={typeof bestFilmKeyword !== 'string' ? '' : bestFilmKeyword}
+              moviesShort={typeof mainCheckbox !== 'boolean' ? false : mainCheckbox}
+              onMovieCardClick={hundleMovieCardButton}
+              onPreloader={onPreloader}
+              isPreloader={isLoader}
+
+            />
+            <ProtectedRoute
+              path="/saved-movies"
+              loggedIn={loggedIn}
+              component={SavedMovies}
+              searhUserMovies={searhUserMovies}
+              faundUserMovies={showSavedMovies === null ? [] : showSavedMovies}
+              alertMessage={alertErrorMesage}
+              handleCheckboxStatus={handleUserCheckbox}
+              moviesKeyword={''}
+              moviesShort={false}
+              onMovieCardClick={hundleMovieCardButton}
+              loadSavedMovies={loadSavedMovies}
+              onPreloader={onSavedPreloader}
+              isPreloader={isSavedLoader}
+            />
+            <ProtectedRoute
+              path="/profile"
+              loggedIn={loggedIn}
+              component={Profile}
+              onUpdateUser={onUpdateUser}
+              onSignOut={onSignOut}
+              name={currentUser.name}
+              email={currentUser.email}
+            />
+            <Route path="/signup">
+              {
+                () => loggedIn ? <Redirect to='/movies' /> : <Register onSignup={onRegister} />
+              }
+            </Route>
+            <Route path="/signin">
+              {
+                () => loggedIn ? <Redirect to='/movies' /> : <Login onSignin={onLogin} />
+              }
+            </Route>
+            <Route exact path="/">
+              <Main />
+            </Route>
+            <Route path="*">
+              <PageNotFound />
+            </Route>
+          </Switch>
+          <Footer />
+          <AlertMessage message={errorMesage} />
+        </InfoMessageContext.Provider>
       </CurrentUserContext.Provider>
     }</>
   );

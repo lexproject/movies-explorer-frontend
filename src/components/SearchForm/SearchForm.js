@@ -1,26 +1,41 @@
-import { useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import './SearchForm.css';
 
-function SearchForm(props) {
-  const [checked, setChecked] = useState(props.checkbox=== 'true'? true :false);
-  const searhRef = useRef(null);
-  const checRef = useRef(null);
+const SearchForm = memo((props) => {
+  const [checked, setChecked] = useState(false);
+  const [keyword, setKeyword] = useState('');
+  const searhRef = useRef('');
+
+  useEffect(() => {
+    if (!props.isSaved) {
+      setChecked(props.checkbox);
+      setKeyword(props.keyword);
+    }
+
+  }, [])
 
   const hundleCheckbox = (e) => {
-    setChecked(!checked);
-    props.checkboxStatus(checRef.current.checked);
+    if (searhRef.current.validity.valid) {
+      setChecked(e.target.checked);
+      props.checkboxStatus(e.target.checked);
+    }
+    else {
+      setChecked(checked);
+      props.alertMessage('Нужно ввести ключевое слово')
+    }
+
   }
 
   function handleSubmit(e) {
     e.preventDefault();
     if (searhRef.current.validity.valid) {
       props.onPreloader();
-      props.searhMovies({ keyword: searhRef.current.value, shortMovies: checRef.current.checked });
+      props.searhMovies({ keyword: keyword, shortMovies: checked });
     } else { props.alertMessage('Нужно ввести ключевое слово') }
   }
 
   return (
-    <form className='searh-form' onSubmit={handleSubmit}>
+    <form className='searh-form' onSubmit={handleSubmit} noValidate>
       <div className='searh-form__field'>
         <input
           type='search'
@@ -28,7 +43,8 @@ function SearchForm(props) {
           id='movies-input'
           className='interactiv-element searh-form__input'
           ref={searhRef}
-          defaultValue={props.keyword}
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
           placeholder='Фильмы'
           required />
         <button
@@ -41,7 +57,6 @@ function SearchForm(props) {
           <input
             className='searh-form__checkbox'
             type='checkbox'
-            ref={checRef}
             checked={checked}
             onChange={hundleCheckbox} />
           <span className='searh-form__slider'></span>
@@ -50,6 +65,6 @@ function SearchForm(props) {
       </div>
     </form>
   );
-}
+})
 
 export default SearchForm;

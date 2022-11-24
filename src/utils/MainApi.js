@@ -40,7 +40,6 @@ class MainApi {
       .then(res => this._getResponseApi(res));
   }
 
-
   getUserMe() {
     return fetch(`${this._baseUrl}/users/me`, {
       credentials: 'include',

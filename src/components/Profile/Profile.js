@@ -9,7 +9,7 @@ function Profile(props) {
   const currentUser = useContext(CurrentUserContext);
   const [onEdit, setOnEdit] = useState(false);
   const errorsMessage = errors.email !== '' ? errors.prompt.email : errors.prompt.name;
-  const isRepeat = (values.name === currentUser.name && values.email === currentUser.email);
+  const isRepeat = ((values.name === currentUser.name && values.email === currentUser.email) || (values.name === '' || values.email === ''));
   const errorActive = (errors.email !== '' || errors.name !== '')
 
   function onSubmitForm(e) {
@@ -18,7 +18,7 @@ function Profile(props) {
     props.onUpdateUser({ name, email });
     resetForm();
   }
- const handlerInput = () => {
+  const handlerInput = () => {
     setOnEdit(!onEdit)
   }
 
@@ -34,7 +34,7 @@ function Profile(props) {
           <label className='profile__info-user profile__info-user_label'>Имя</label>
           <input
             className={`profile__input ${onEdit && 'profile__input_active interactiv-element'}`}
-            value={values.name}
+            value={values.name === '' ? currentUser.name : values.name}
             onChange={handleChange}
             type='text'
             name='name'
@@ -57,9 +57,9 @@ function Profile(props) {
             className={`profile__input ${onEdit && 'profile__input_active interactiv-element'}`}
             type='email'
             name='email'
-            value={values.email}
+            value={values.email === '' ? currentUser.email : values.email}
             onChange={handleChange}
-            pattern="([A-z0-9_.-]{1,})@([A-z0-9_.-]{1,}).([A-z]{2,8})"
+            pattern="([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z_-]{2,8})"
             id='profile-email-input'
             placeholder='Email'
             autoComplete='on'
@@ -74,7 +74,7 @@ function Profile(props) {
 
       <span
         className='autorization__label autorization__label_error'
-        style={{ opacity: (errorActive || isRepeat) && 1 }} >
+        style={{ opacity: (errorActive || isRepeat && isValid) && 1 }} >
         {isRepeat ? errors.prompt.repeat : errorsMessage}
       </span>
 

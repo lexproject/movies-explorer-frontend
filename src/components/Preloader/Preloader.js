@@ -1,21 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
+import { InfoMessageContext } from '../../contexts/InfoMessageContext';
 import './Preloader.css';
 
-const Preloader = ({isMovies}) => {
-
-  const [searhStatus, setSearhStatus] = useState(false);
-useEffect(()=>{
-  const timer = setTimeout(()=>{
-    setSearhStatus(isMovies);},1000)
-  return ()=>{
-    //setSearhStatus(false);
-    clearTimeout(timer);}},[])
+const Preloader = () => {
+  const infoMessage = useContext(InfoMessageContext);
   return (
     <div className='preloader'>
       <div className='preloader__container'>
-       {searhStatus ? <p className='preloader__text'>Ничего не найдено</p> :
-        <span className='preloader__round'></span>}
-
+        {infoMessage !== '' ? <p className='preloader__text'>{infoMessage}</p> :
+          <span className='preloader__round'></span>}
       </div>
     </div>
   )
