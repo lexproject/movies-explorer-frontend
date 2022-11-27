@@ -16,6 +16,8 @@ import { moviesApi } from '../../utils/MoviesApi';
 import { mainApi } from '../../utils/MainApi';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import { InfoMessageContext } from '../../contexts/InfoMessageContext';
+import { useValidation } from '../../utils/Validation';
+import { apiBestFilms, shortMoviesTime } from '../../utils/constants';
 
 function App() {
   const history = useHistory();
@@ -33,6 +35,8 @@ function App() {
   const [isLoader, setLoader] = useState(false);
   const [isSavedLoader, setSavedLoader] = useState(false);
   const [infoMessage, setInfoMessage] = useState('');
+  const [isSend, setIsSend] = useState(false);
+  const { resetForm } = useValidation();
 
 
   useEffect(() => {
@@ -79,8 +83,8 @@ function App() {
         }
       })
       .catch(err => {
-        console.log(err.message.slice(12, -2));
-        allOut();
+        err.message.includes('Ошибка 401') && allOut();
+        console.log(err.message);
         alertErrorMesage('Для полного доступа необходима авторизация.')
       })
       .finally(() => setIsChecked(true));
@@ -90,8 +94,8 @@ function App() {
 
   const Sync2Id = (movie) => {
     movie.movieId = movie.id;
-    movie.thumbnail = 'https://api.nomoreparties.co' + movie.image.formats.thumbnail.url;
-    movie.image = 'https://api.nomoreparties.co' + movie.image.url;
+    movie.thumbnail = apiBestFilms + movie.image.formats.thumbnail.url;
+    movie.image = apiBestFilms + movie.image.url;
     delete movie.id;
     return movie;
   }
@@ -99,10 +103,15 @@ function App() {
   const getUserMovies = () => {
     mainApi.getUserMovies()
       .then(movie => setUserSavedMovies(movie.data))
-      .catch(err => alertErrorMesage(err.message.slice(12, -2)));
+      .catch(err => {
+        err.message.includes('Ошибка 401') && allOut();
+        alertErrorMesage(err.message.slice(12, -2));
+      });
   }
 
   function loadSavedMovies() { searhUserMovies(null) }
+
+  const sendRequest = () => setIsSend(true);
 
   function onLogin(dataInput) {
     const { password, email } = dataInput;
@@ -110,13 +119,18 @@ function App() {
     mainApi.signin(password, email)
       .then((userData) => {
         if (userData) {
+          setIsSend(false);
+          resetForm();
           setLoggedIn(true);
           onSignIn();
           history.push('/movies');
           alertErrorMesage(userData.message);
         }
       })
-      .catch(err => { setInfoMessage(err.message.slice(12, -2)) });
+      .catch(err => {
+        setInfoMessage(err.message.slice(12, -2));
+        setIsSend(false);
+      });
   }
 
   function onRegister(dataAuth) {
@@ -125,10 +139,15 @@ function App() {
     mainApi.signup(password, email, name)
       .then((userData) => {
         if (userData) {
+          resetForm();
+          setIsSend(false);
           onLogin({ email, password })
         }
       })
-      .catch(err => { setInfoMessage(err.message.slice(12, -2)) });
+      .catch(err => {
+        setInfoMessage(err.message.slice(12, -2));
+        setIsSend(false);
+      });
   }
 
   function onSignOut() {
@@ -158,7 +177,7 @@ function App() {
     if (keyword === '') { return [] }
     if (shortMovies) {
       faundMovies = listMovies.filter(movie =>
-        (movie.duration < 41) && movie.nameRU.includes(keyword) && movie);
+        (movie.duration < shortMoviesTime) && movie.nameRU.toLowerCase().includes(keyword.toLowerCase()) && movie);
     }
     if (!shortMovies) {
       faundMovies = listMovies.filter(movie =>
@@ -272,6 +291,7 @@ function App() {
         alertErrorMesage(movieDelete.message);
       })
       .catch(err => {
+        err.message.includes('Ошибка 401') && allOut();
         console.log(err);
         alertErrorMesage(err.message.slice(12, -2));
       })
@@ -288,6 +308,7 @@ function App() {
           alertErrorMesage('Фильм ' + movieSaved.data.nameRU + ' помещён в избранное.');
         })
         .catch(err => {
+          err.message.includes('Ошибка 401') && allOut();
           console.log(err);
           alertErrorMesage(err.message.slice(12, -2));
         })
@@ -303,7 +324,10 @@ function App() {
         setCurrentUser(user.data);
         alertErrorMesage('Данные были успешно редактированы.');
       })
-      .catch(err => alertErrorMesage(err.message.slice(12, -2)))
+      .catch(err => {
+        alertErrorMesage(err.message.slice(12, -2));
+        err.message.includes('Ошибка 401') && allOut();
+      })
   }
 
   return (
@@ -353,12 +377,20 @@ function App() {
             />
             <Route path="/signup">
               {
-                () => loggedIn ? <Redirect to='/movies' /> : <Register onSignup={onRegister} />
+                () => loggedIn ? <Redirect to='/movies' /> : <Register
+                  onSignup={onRegister}
+                  isDisabled={sendRequest}
+                  elementDisabledStatus={isSend}
+                />
               }
             </Route>
             <Route path="/signin">
               {
-                () => loggedIn ? <Redirect to='/movies' /> : <Login onSignin={onLogin} />
+                () => loggedIn ? <Redirect to='/movies' /> : <Login
+                  onSignin={onLogin}
+                  isDisabled={sendRequest}
+                  elementDisabledStatus={isSend}
+                />
               }
             </Route>
             <Route exact path="/">

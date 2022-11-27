@@ -23,8 +23,8 @@ const Autorization = (props) => {
       <button
         type='submit'
         form='sign-form'
-        className={`interactiv-element autorization__button ${!props.isValid && 'autorization__button_disabled'}`}
-        disabled={!props.isValid}
+        className={`interactiv-element autorization__button ${(!props.isValid || props.buttonSendSatus) && 'autorization__button_disabled'}`}
+        disabled={!props.isValid || props.buttonSendSatus}
       >{props.buttonTex}
       </button>
       <p className='autorization__text'>{`${props.questText} зарегистрированы?`}

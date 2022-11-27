@@ -4,11 +4,11 @@ import './Login.css';
 
 function Login(props) {
 
-  const { handleChange, values, errors, resetForm, isValid } = useValidation();
+  const { handleChange, values, errors, isValid } = useValidation();
   function onSubmit(e) {
     e.preventDefault();
     props.onSignin({ email: values.email, password: values.password });
-    resetForm();
+    props.isDisabled();
   }
 
   return (
@@ -20,6 +20,7 @@ function Login(props) {
       linkText={'Регистрация'}
       onSubmit={onSubmit}
       isValid={isValid}
+      buttonSendSatus={props.elementDisabledStatus}
     >
       <label className='autorization__label'>E-mail</label>
       <input
@@ -32,7 +33,9 @@ function Login(props) {
         onChange={handleChange}
         placeholder='Email'
         autoComplete='on'
-        required />
+        required
+        disabled={props.elementDisabledStatus}
+      />
       <span
         className='autorization__label autorization__label_error'
         style={{ opacity: (errors.email !== '') && 1 }} >
@@ -47,7 +50,9 @@ function Login(props) {
         value={values.password}
         onChange={handleChange}
         placeholder='Пароль'
-        required />
+        required
+        disabled={props.elementDisabledStatus}
+      />
       <span
         className='autorization__label autorization__label_error'
         style={{ opacity: 1 }} >

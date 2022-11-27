@@ -4,11 +4,11 @@ import { useValidation } from '../../utils/Validation';
 
 function Register(props) {
 
-  const { handleChange, values, errors, resetForm, isValid } = useValidation();
+  const { handleChange, values, errors, isValid } = useValidation();
   function onSubmit(e) {
     e.preventDefault();
     props.onSignup(values);
-    resetForm();
+    props.isDisabled();
   }
   return (
     <Autorization
@@ -19,6 +19,7 @@ function Register(props) {
       linkText={'Войти'}
       onSubmit={onSubmit}
       isValid={isValid}
+      buttonSendSatus={props.elementDisabledStatus}
     >
       <label className='autorization__label'>Имя</label>
       <input
@@ -32,7 +33,9 @@ function Register(props) {
         pattern='^[A-Za-zА-Яа-яЁё\s-]+$'
         minLength='2'
         maxLength='30'
-        required />
+        required
+        disabled={props.elementDisabledStatus}
+      />
       <span
         className='autorization__label autorization__label_error'
         style={{ opacity: (errors.name !== '') && 1 }} >
@@ -48,7 +51,9 @@ function Register(props) {
         placeholder='Email'
         pattern="([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z_-]{2,8})"
         autoComplete='on'
-        required />
+        required
+        disabled={props.elementDisabledStatus}
+      />
       <span
         className='autorization__label autorization__label_error'
         style={{ opacity: (errors.email !== '') && 1 }} >
@@ -65,7 +70,9 @@ function Register(props) {
         placeholder='Пароль'
         minLength='6'
         maxLength='30'
-        required />
+        required
+        disabled={props.elementDisabledStatus}
+      />
       <span
         className='autorization__label autorization__label_error'
         style={{ opacity: 1 }} >

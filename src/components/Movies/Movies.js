@@ -4,6 +4,7 @@ import SearchForm from '../SearchForm/SearchForm';
 import Preloader from '../Preloader/Preloader';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import More from '../More/More';
+import { variablesOnRenderMovies } from '../../utils/constants';
 
 const Movies = memo(({
   updateMovies,
@@ -19,12 +20,20 @@ const Movies = memo(({
   const [countMovies, setCountMovies] = useState({});
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [countRender, setCountRender] = useState(0);
+  const {
+    initialCardOnDesctop,
+    initialCardOnTablet,
+    initialCardOnMobile,
+    cardAddOnDesctop,
+    cardAddOnTablet,
+    cardAddOnMobile
+  } = variablesOnRenderMovies;
 
   const setWindowDimensions = useCallback(() => {
     setScreenWidth(window.innerWidth);
-    if (screenWidth < 769) { setCountMovies(countMovies => ({ ...countMovies, init: 8, add: 2 })) }
-    if (screenWidth < 425) { setCountMovies(countMovies => ({ ...countMovies, init: 5, add: 1 })) }
-    else if (screenWidth > 769) { setCountMovies(countMovies => ({ ...countMovies, init: 12, add: 3 })) }
+    if (screenWidth < 769) { setCountMovies(countMovies => ({ ...countMovies, init: initialCardOnTablet, add: cardAddOnTablet })) }
+    if (screenWidth < 425) { setCountMovies(countMovies => ({ ...countMovies, init: initialCardOnMobile, add: cardAddOnMobile })) }
+    else if (screenWidth > 769) { setCountMovies(countMovies => ({ ...countMovies, init: initialCardOnDesctop, add: cardAddOnDesctop })) }
   }, [screenWidth])
 
   useEffect(() => {
