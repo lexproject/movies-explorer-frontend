@@ -59,6 +59,15 @@
   position: relative;
 }
 
+.preloader__text {
+  padding: 0;
+  margin: auto;
+  font-size: 21px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+}
+
 .preloader__round {
   width: 250px;
   height: 150px;

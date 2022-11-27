@@ -29,6 +29,7 @@
   padding: 0;
   border: none;
   background-size: cover;
+  z-index: 10;
 }
 
 .header__menu-button_close {
@@ -68,7 +69,6 @@
 
   .header__menu-button {
     display: block;
-    z-index: 3;
   }
 }
 

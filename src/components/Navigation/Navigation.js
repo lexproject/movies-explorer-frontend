@@ -3,9 +3,11 @@ import './Navigation.css';
 import accaunt from '../../images/accaunt-button.svg'
 
 const Navigation = ({ clicMenu, togleMenu }) => {
+
+  const screenWidth = window.innerWidth;
   return (
     <nav className='menu'
-      style={{ display: togleMenu && 'flex' }}>
+      style={{ display: screenWidth < 769 && togleMenu && 'flex' }}>
       <NavLink
         exact to='/'
         onClick={clicMenu}

@@ -1,26 +1,32 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect } from 'react';
 import './SavedMovies.css';
 import SearchForm from '../SearchForm/SearchForm';
 import Preloader from '../Preloader/Preloader';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
-import moviesList from '../../utils/moviesList';
 
 const SavedMovies = memo((props) => {
-  const [isLoader, setLoader] = useState(true);
+
   useEffect(() => {
-    props.chekCurrentRoute('/movies');
-    const timer = setTimeout(() => {
-      setLoader(false);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [props, isLoader]);
+    props.loadSavedMovies();
+  }, []);
+
   return (
     <>
-      <SearchForm />
-      {isLoader ? <Preloader /> :
+      <SearchForm
+        searhMovies={props.searhUserMovies}
+        alertMessage={props.alertMessage}
+        onPreloader={props.onPreloader}
+        checkboxStatus={props.handleCheckboxStatus}
+        keyword={props.moviesKeyword}
+        checkbox={props.moviesShort}
+      />
+
+      {props.isPreloader ? <Preloader /> :
         <MoviesCardList
-          movies={moviesList}
-          isSaved={true} />
+          movies={props.faundUserMovies}
+          isSaved={true}
+          countRender={props.faundUserMovies.length}
+          onMovieCardClick={props.onMovieCardClick} />
       }
     </>
   );
