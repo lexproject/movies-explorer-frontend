@@ -1,17 +1,17 @@
 import './AboutMe.css';
-import aboutFoto from '../../../images/about-foto.png';
+import aboutFoto from '../../../images/about-foto.jpg';
 function AboutMe(props) {
   return (
     <section className='about'>
       <h2 className='main-section__title'>Студент</h2>
       <div className='about__container'>
         <div className='about__info'>
-          <h3 className='about__title'>Виталий</h3>
-          <p className='about__text-big'>Фронтенд-разработчик, 30 лет</p>
-          <p className='about__text-medium'>Я родился и живу в Саратове, закончил факультет экономики СГУ.
-            У меня есть жена и дочь.
-            Я люблю слушать музыку, а ещё увлекаюсь бегом.
-            Недавно начал кодить. С 2015 года работал в компании «СКБ Контур».
+          <h3 className='about__title'>Виктор</h3>
+          <p className='about__text-big'>Фронтенд-разработчик, 44 года</p>
+          <p className='about__text-medium'>Я родился и живу в Молдавии.
+            У меня есть жена и двое детей.
+            Я люблю слушать музыку, а ещё увлекаюсь спортом.
+            Недавно начал кодить.
             После того, как прошёл курс по веб-разработке,
             начал заниматься фриланс-заказами и ушёл с постоянной работы.</p>
           <span className='about__text-small'>Github</span>

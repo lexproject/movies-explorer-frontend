@@ -79,15 +79,18 @@
   height: 45px;
 }
 
+.profile__button_disabled {
+  background: #262525;
+  color: #444;
+}
+
 .profile__button_submit {
   background: #4285F4;
   border-radius: 3px;
 }
 
-.profile__exit {
+.profile__button_exit {
   font-weight: 500;
-  font-size: 13px;
-  line-height: 16px;
   color: #EE3465;
 }
 

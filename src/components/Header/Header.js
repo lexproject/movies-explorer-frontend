@@ -1,26 +1,28 @@
 import { Link, Route } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Navigation from '../Navigation/Navigation';
 import Logo from '../Logo/Logo';
 import Popup from '../Popup/Popup';
 import './Header.css';
 import { useState } from 'react';
 const Header = (props) => {
+
+  const location = useLocation();
   const [isTablet, setIsTablet] = useState(false);
   const handlerMenu = () => setIsTablet(!isTablet);
-  const isHome = (props.curentPage === '/');
+  const isHome = (location.pathname === '/');
 
   return (
     <header className='header'
       style={{
-        display: (props.curentPage === '/sign') && 'none',
+        display: (location.pathname === '/signin' || location.pathname === '/signup') && 'none',
         backgroundColor: isHome && '#073042'
       }}>
       <Logo modClass={'main'} />
       <button
         className={`interactiv-element header__menu-button ${isTablet && 'header__menu-button_close'}`}
         style={{
-          display: isHome && 'none',
-          zIndex: !isHome && 10
+          display: !props.isAutorizated && 'none'
         }}
         onClick={handlerMenu} />
       <div
@@ -28,7 +30,7 @@ const Header = (props) => {
         style={{
           width: !isHome && '100%'
         }}>
-        {(props.curentPage !== '/') ?
+        {(props.isAutorizated) ?
           <Navigation
             clicMenu={handlerMenu}
             togleMenu={isTablet} /> :
@@ -43,7 +45,7 @@ const Header = (props) => {
             </Route>
           </div>}
       </div>
-      <Popup isTablet={isTablet} />
+      {!props.isAutorizated && <Popup isTablet={isTablet} />}
     </header>
   );
 }
